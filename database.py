@@ -62,3 +62,17 @@ def verify_database(conn):
             print(f"{label}: {count} rows")
         except sqlite3.Error as e:
             print(f"Verification failed for {label}: {e}")
+
+
+def setup_database():
+    print("Setting up in-memory database...")
+    try:
+        conn = create_connection()
+        load_schema(conn)
+        load_csv_data(conn)
+        verify_database(conn)
+        print("\nDatabase ready\n")
+        return conn
+    except Exception as e:
+        print(f"\nDatabase setup failed: {e}")
+        raise
