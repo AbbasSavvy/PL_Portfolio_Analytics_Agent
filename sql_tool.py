@@ -43,3 +43,13 @@ def execute_sql(query, conn):
         return [dict(zip(columns, row)) for row in rows]
     except sqlite3.Error as e:
         raise RuntimeError(f"SQL execution failed: {e}\nQuery: {query}")
+
+
+def run_sql_tool(question, conn, client):
+    try:
+        sql_query = generate_sql(question, client)
+        print(f"Generated SQL: {sql_query}")
+        results = execute_sql(sql_query, conn)
+        return {"sql": sql_query, "results": results}
+    except Exception as e:
+        return {"error": str(e)}
