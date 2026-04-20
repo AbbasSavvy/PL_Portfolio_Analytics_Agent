@@ -76,3 +76,11 @@ def setup_database():
     except Exception as e:
         print(f"\nDatabase setup failed: {e}")
         raise
+
+
+if __name__ == "__main__":
+    conn = setup_database()
+    print("Sample query - active portfolios:")
+    cursor = conn.execute("SELECT portfolio_name, total_aum FROM portfolios WHERE status = 'Active'")
+    for row in cursor.fetchall():
+        print(f"  {row[0]}: ${row[1]:,.0f}")
