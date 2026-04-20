@@ -28,3 +28,7 @@ def calculate_sector_exposure(portfolio_name, conn):
         }
     except sqlite3.Error as e:
         return {"error": f"Database error: {e}"}
+
+
+def run_exposure_tool(portfolio_name, conn):
+    return calculate_sector_exposure(portfolio_name, conn)
