@@ -1,6 +1,6 @@
 import os
 import re
-
+import sqlite3
 
 def get_schema_for_prompt():
     schema_path = os.path.join(os.path.dirname(__file__), "database_schema.sql")
@@ -33,3 +33,13 @@ Rules:
     )
     return response.text.strip()
 
+
+
+def execute_sql(query, conn):
+    try:
+        cursor = conn.execute(query)
+        columns = [description[0] for description in cursor.description]
+        rows = cursor.fetchall()
+        return [dict(zip(columns, row)) for row in rows]
+    except sqlite3.Error as e:
+        raise RuntimeError(f"SQL execution failed: {e}\nQuery: {query}")
