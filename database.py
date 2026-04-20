@@ -46,3 +46,19 @@ def load_csv_data(conn):
             print(f"Loaded {len(df)} rows into '{table_name}'")
         except Exception as e:
             print(f"Failed to load '{table_name}': {e}")
+
+
+def verify_database(conn):
+    print("\n--- Verification ---")
+    checks = [
+        ("Portfolios",  "SELECT COUNT(*) FROM portfolios"),
+        ("Securities",  "SELECT COUNT(*) FROM securities"),
+        ("Holdings",    "SELECT COUNT(*) FROM holdings"),
+    ]
+    for label, query in checks:
+        try:
+            cursor = conn.execute(query)
+            count = cursor.fetchone()[0]
+            print(f"{label}: {count} rows")
+        except sqlite3.Error as e:
+            print(f"Verification failed for {label}: {e}")
