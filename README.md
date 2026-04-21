@@ -7,7 +7,7 @@ An AI agent that answers natural language questions about portfolio data using G
 **1. Clone the repository and navigate into it**
 
 ```bash
-git clone <repo_url>
+git clone https://github.com/AbbasSavvy/PL_Portfolio_Analytics_Agent.git
 cd PL_Portfolio_Analytics_Agent
 ```
 
