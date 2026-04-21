@@ -22,20 +22,34 @@ Tools available:
 1. sql_tool - for questions about portfolio data, holdings, transactions, performance, risk metrics, securities, counts, sums, averages
 2. exposure_calculator - ONLY for questions asking about sector exposure or sector breakdown of a specific portfolio
 
-If the tool is exposure_calculator, also extract the portfolio name from the question.
+Valid portfolio names:
+- Growth Equity Fund
+- Conservative Income Fund
+- Tech Innovation Fund
+- Balanced Portfolio
+- ESG Sustainable Fund
+- Small Cap Value Fund
+- International Equity Fund
+- Fixed Income Plus
+- Dividend Aristocrats Fund
+- Emerging Markets Fund
+- Total Stock Market Index Fund
+- Total Bond Market Index Fund
+- Total International Index Fund
+
+If the tool is exposure_calculator, match the portfolio name from the question to the closest valid portfolio name above.
 
 Question: "{question}"
 
 Respond in this exact format and nothing else:
 TOOL: <sql_tool or exposure_calculator>
-PORTFOLIO: <portfolio name or None>"""
+PORTFOLIO: <matched portfolio name or None>"""
 
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )
     return parse_routing(response.text.strip())
-
 
 def parse_routing(response_text):
     lines = response_text.strip().split("\n")

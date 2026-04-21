@@ -45,10 +45,21 @@ def execute_sql(query, conn):
         raise RuntimeError(f"SQL execution failed: {e}\nQuery: {query}")
 
 
+FORBIDDEN_KEYWORDS = ["DROP", "DELETE", "TRUNCATE", "ALTER", "INSERT", "UPDATE"]
+
+def validate_sql(query):
+    """Block any SQL that modifies or destroys data."""
+    query_upper = query.upper()
+    for keyword in FORBIDDEN_KEYWORDS:
+        if keyword in query_upper:
+            raise ValueError(f"Query contains forbidden keyword: {keyword}. Only SELECT queries are allowed.")
+
+
 def run_sql_tool(question, conn, client):
     try:
         sql_query = generate_sql(question, client)
         print(f"Generated SQL: {sql_query}")
+        validate_sql(sql_query)
         results = execute_sql(sql_query, conn)
         return {"sql": sql_query, "results": results}
     except Exception as e:
