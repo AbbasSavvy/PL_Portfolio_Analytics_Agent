@@ -18,6 +18,16 @@ def run_ground_truth_sql(sql, conn):
     except Exception as e:
         return None
 
+
+def normalize_results(results):
+    if not results:
+        return results
+    return sorted([
+        {k: (round(v, 2) if isinstance(v, float) else v) for k, v in row.items()}
+        for row in results
+    ], key=lambda x: str(sorted(x.items())))
+
+
 def evaluate_sql_result(result, question_id):
     if "error" in result:
         return False, f"Error: {result['error']}"
