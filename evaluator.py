@@ -7,3 +7,9 @@ def load_ground_truth():
         data = json.load(f)
     return data["questions"]
 
+def evaluate_sql_result(result, question_id):
+    if "error" in result:
+        return False, f"Error: {result['error']}"
+    if "results" not in result or result["results"] is None:
+        return False, "No results returned"
+    return True, f"Returned {len(result['results'])} row(s)"
