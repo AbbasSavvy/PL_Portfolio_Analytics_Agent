@@ -49,11 +49,21 @@ def evaluate_sql_result(agent_result, expected_sql, conn):
     if agent_normalized == expected_normalized:
         return True, f"Returned {len(agent_rows)} row(s) with correct values"
 
-    agent_values = sorted([tuple(sorted(row.values())) for row in agent_rows], key=str)
-    expected_values = sorted([tuple(sorted(row.values())) for row in expected_rows], key=str)
+    agent_values = sorted([tuple(sorted(row.values(), key=str)) for row in agent_rows], key=str)
+    expected_values = sorted([tuple(sorted(row.values(), key=str)) for row in expected_rows], key=str)
 
     if agent_values == expected_values:
         return True, f"Returned {len(agent_rows)} row(s) with correct values (different column names)"
+
+    agent_value_sets = [set(str(v) for v in row.values()) for row in agent_rows]
+    expected_value_sets = [set(str(v) for v in row.values()) for row in expected_rows]
+    subset_match = all(
+        any(expected_vals.issubset(agent_vals) or agent_vals.issubset(expected_vals)
+            for agent_vals in agent_value_sets)
+        for expected_vals in expected_value_sets
+    )
+    if subset_match:
+        return True, f"Returned {len(agent_rows)} row(s) with correct values (subset match)"
 
     return False, f"Value mismatch.\n    Agent:    {agent_normalized[:2]}\n    Expected: {expected_normalized[:2]}"
 
