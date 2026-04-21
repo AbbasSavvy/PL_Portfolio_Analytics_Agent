@@ -55,7 +55,7 @@ def evaluate_sql_result(agent_result, expected_sql, conn):
 
     return False, f"Value mismatch.\n    Agent:    {agent_normalized[:2]}\n    Expected: {expected_normalized[:2]}"
 
-def evaluate_exposure_result(result, question_id):
+def evaluate_exposure_result(result):
     if "error" in result:
         return False, f"Error: {result['error']}"
     if "sector_exposures" not in result:
@@ -85,6 +85,7 @@ def run_evaluation():
         question_text = q["question"]
         question_type = q["type"]
         difficulty = q["difficulty"]
+        ground_truth = q["ground_truth"]
 
         print(f"Q{question_id} [{difficulty}] {question_text}")
 
@@ -92,9 +93,10 @@ def run_evaluation():
             result = answer_question(question_text, conn, client)
 
             if question_type == "exposure_calculator":
-                success, message = evaluate_exposure_result(result, question_id)
+                success, message = evaluate_exposure_result(result)
             else:
-                success, message = evaluate_sql_result(result, question_id)
+                expected_sql = ground_truth.get("sql_query", "")
+                success, message = evaluate_sql_result(result, expected_sql, conn)
 
             if success:
                 print(f"  PASS - {message}")
