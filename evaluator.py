@@ -28,12 +28,32 @@ def normalize_results(results):
     ], key=lambda x: str(sorted(x.items())))
 
 
-def evaluate_sql_result(result, question_id):
-    if "error" in result:
-        return False, f"Error: {result['error']}"
-    if "results" not in result or result["results"] is None:
-        return False, "No results returned"
-    return True, f"Returned {len(result['results'])} row(s)"
+def evaluate_sql_result(agent_result, expected_sql, conn):
+    if "error" in agent_result:
+        return False, f"Error: {agent_result['error']}"
+
+    agent_rows = agent_result.get("results", [])
+    expected_rows = run_ground_truth_sql(expected_sql, conn)
+
+    if expected_rows is None:
+        return False, "Could not execute ground truth SQL"
+
+    if len(agent_rows) != len(expected_rows):
+        return False, f"Row count mismatch: got {len(agent_rows)}, expected {len(expected_rows)}"
+
+    agent_normalized = normalize_results(agent_rows)
+    expected_normalized = normalize_results(expected_rows)
+
+    if agent_normalized == expected_normalized:
+        return True, f"Returned {len(agent_rows)} row(s) with correct values"
+
+    agent_values = sorted([tuple(sorted(row.values())) for row in agent_rows], key=str)
+    expected_values = sorted([tuple(sorted(row.values())) for row in expected_rows], key=str)
+
+    if agent_values == expected_values:
+        return True, f"Returned {len(agent_rows)} row(s) with correct values (different column names)"
+
+    return False, f"Value mismatch.\n    Agent:    {agent_normalized[:2]}\n    Expected: {expected_normalized[:2]}"
 
 def evaluate_exposure_result(result, question_id):
     if "error" in result:
