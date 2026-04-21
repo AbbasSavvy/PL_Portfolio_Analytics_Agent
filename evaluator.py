@@ -9,6 +9,15 @@ def load_ground_truth():
         data = json.load(f)
     return data["questions"]
 
+def run_ground_truth_sql(sql, conn):
+    try:
+        cursor = conn.execute(sql)
+        columns = [description[0] for description in cursor.description]
+        rows = cursor.fetchall()
+        return [dict(zip(columns, row)) for row in rows]
+    except Exception as e:
+        return None
+
 def evaluate_sql_result(result, question_id):
     if "error" in result:
         return False, f"Error: {result['error']}"
