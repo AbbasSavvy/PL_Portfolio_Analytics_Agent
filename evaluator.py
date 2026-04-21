@@ -13,3 +13,15 @@ def evaluate_sql_result(result, question_id):
     if "results" not in result or result["results"] is None:
         return False, "No results returned"
     return True, f"Returned {len(result['results'])} row(s)"
+
+def evaluate_exposure_result(result, question_id):
+    if "error" in result:
+        return False, f"Error: {result['error']}"
+    if "sector_exposures" not in result:
+        return False, "No sector_exposures in result"
+    if not result["sector_exposures"]:
+        return False, "Empty sector_exposures"
+    total = sum(result["sector_exposures"].values())
+    if not (99.0 <= total <= 101.0):
+        return False, f"Sector exposures don't add up to 100% (got {total:.2f}%)"
+    return True, f"Got {len(result['sector_exposures'])} sectors, total = {total:.2f}%"
