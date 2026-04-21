@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 from google import genai
+from sql_tool import run_sql_tool
+from exposure_calculator import run_exposure_tool
 
 
 load_dotenv()
@@ -47,3 +49,15 @@ def parse_routing(response_text):
                 portfolio = None
     return tool, portfolio
 
+
+def answer_question(question, conn, client):
+    print(f"\nQuestion: {question}")
+    tool, portfolio = route_question(question, client)
+    print(f"Tool selected: {tool}")
+
+    if tool == "exposure_calculator" and portfolio:
+        result = run_exposure_tool(portfolio, conn)
+    else:
+        result = run_sql_tool(question, conn, client)
+
+    return result
