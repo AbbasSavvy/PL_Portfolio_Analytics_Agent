@@ -31,4 +31,19 @@ PORTFOLIO: <portfolio name or None>"""
         model="gemini-2.5-flash",
         contents=prompt
     )
-    return None
+    return parse_routing(response.text.strip())
+
+
+def parse_routing(response_text):
+    lines = response_text.strip().split("\n")
+    tool = None
+    portfolio = None
+    for line in lines:
+        if line.startswith("TOOL:"):
+            tool = line.replace("TOOL:", "").strip()
+        elif line.startswith("PORTFOLIO:"):
+            portfolio = line.replace("PORTFOLIO:", "").strip()
+            if portfolio == "None":
+                portfolio = None
+    return tool, portfolio
+
