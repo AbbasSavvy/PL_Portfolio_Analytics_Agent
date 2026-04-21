@@ -26,7 +26,7 @@ Rules:
 - Return only the SQL query, no explanation or markdown
 - Do not wrap the query in backticks or code blocks
 - Use only tables and columns that exist in the schema above
-- String values are case-sensitive, use exact casing as stored in the database
+- String comparisons are case-sensitive. For example, use 'High' not 'high', 'Active' not 'active', 'Stock' not 'stock'
 """
     response = client.models.generate_content(
         model="gemini-2.5-flash",

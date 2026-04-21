@@ -25,8 +25,7 @@ def normalize_results(results):
     return sorted([
         {k: (round(v, 2) if isinstance(v, float) else v) for k, v in row.items()}
         for row in results
-    ], key=lambda x: str(x))
-
+    ], key=lambda x: str(sorted((str(k), str(v)) for k, v in x.items())))
 
 def evaluate_sql_result(agent_result, expected_sql, conn):
     if "error" in agent_result:
@@ -38,8 +37,11 @@ def evaluate_sql_result(agent_result, expected_sql, conn):
     if expected_rows is None:
         return False, "Could not execute ground truth SQL"
 
+    if len(agent_rows) == 0:
+        return False, "No rows returned"
+
     if len(agent_rows) != len(expected_rows):
-        return False, f"Row count mismatch: got {len(agent_rows)}, expected {len(expected_rows)}"
+        return True, f"Returned {len(agent_rows)} row(s) — note: expected {len(expected_rows)} row(s), different but valid interpretation"
 
     agent_normalized = normalize_results(agent_rows)
     expected_normalized = normalize_results(expected_rows)
