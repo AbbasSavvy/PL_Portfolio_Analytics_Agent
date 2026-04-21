@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 from sql_tool import run_sql_tool
 from exposure_calculator import run_exposure_tool
+from database import setup_database
 
 
 load_dotenv()
@@ -61,3 +62,25 @@ def answer_question(question, conn, client):
         result = run_sql_tool(question, conn, client)
 
     return result
+
+
+def main():
+    conn = setup_database()
+    client = create_client()
+
+    print("Portfolio Analytics Agent ready. Type 'exit' to quit.")
+    while True:
+        question = input("\nAsk a question: ").strip()
+        if question.lower() == "exit":
+            break
+        if not question:
+            continue
+        try:
+            result = answer_question(question, conn, client)
+            print(f"Result: {result}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()
