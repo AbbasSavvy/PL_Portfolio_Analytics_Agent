@@ -25,7 +25,7 @@ def normalize_results(results):
     return sorted([
         {k: (round(v, 2) if isinstance(v, float) else v) for k, v in row.items()}
         for row in results
-    ], key=lambda x: str(sorted(x.items())))
+    ], key=lambda x: str(x))
 
 
 def evaluate_sql_result(agent_result, expected_sql, conn):
