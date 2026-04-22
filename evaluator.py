@@ -1,6 +1,7 @@
 import os
 import json
 from database import setup_database
+import time
 from agent import create_client, answer_question
 
 def load_ground_truth():
@@ -121,6 +122,7 @@ def run_evaluation():
             print(f"  FAIL - Exception: {e}")
             failed += 1
 
+        # time.sleep(15)  # uncomment if using free tier
         print()
 
     print("-" * 60)
