@@ -67,6 +67,7 @@ python evaluator.py
 ```
 
 Runs all 10 questions from `ground_truth_dataset.json` through the agent and scores the results.
+> <u>Note</u>: If using the free tier for Google AI API, uncomment the `time.sleep(15)` line in `evaluator.py` to avoid hitting the 5 requests/minute rate limit.
 
 ## How it works
 
